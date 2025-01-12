@@ -1,0 +1,58 @@
+name: Continuous test and release
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features:
+          - make
+        baseImage:
+          - docker.io/library/alpine:latest
+          - docker.io/library/archlinux:latest
+          - docker.io/library/debian:latest
+          - docker.io/library/ubuntu:latest
+          - quay.io/centos/centos:stream10
+          - registry.fedoraproject.org/fedora:latest
+          - mcr.microsoft.com/devcontainers/base:alpine
+          - mcr.microsoft.com/devcontainers/base:debian
+          - mcr.microsoft.com/devcontainers/base:ubuntu
+    steps:
+      - name: Checkout code
+        uses: silver886/github-actions/checkout@master
+      - name: Install latest devcontainer CLI
+        run: npm install -g @devcontainers/cli
+      - name: Generating tests for '${{ matrix.features }}' on '${{ matrix.baseImage }}'
+        run: devcontainer features test -f ${{ matrix.features }} -i ${{ matrix.baseImage }} .
+
+  test-global:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: silver886/github-actions/checkout@master
+      - name: Install latest devcontainer CLI
+        run: npm install -g @devcontainers/cli
+      - name: Testing global scenarios
+        run: devcontainer features test --global-scenarios-only .
+
+  release:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - test-global
+    steps:
+      - name: Checkout code
+        uses: silver886/github-actions/checkout@master
+      - name: Publish
+        uses: devcontainers/action@v1
+        with:
+          publish-features: true
+          base-path-to-features: ./src
+          generate-docs: true
+      - name: Create Pull Request
+        uses: silver886/github-actions/create/pull-request@master
