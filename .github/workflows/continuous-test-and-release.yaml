@@ -50,8 +50,6 @@ jobs:
       - test-global
     permissions:
       packages: write
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout code
         uses: silver886/github-actions/checkout@master
@@ -62,6 +60,3 @@ jobs:
         with:
           publish-features: true
           base-path-to-features: ./src
-          generate-docs: true
-      - name: Create Pull Request
-        uses: silver886/github-actions/create/pull-request@master
