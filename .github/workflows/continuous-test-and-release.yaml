@@ -40,7 +40,7 @@ jobs:
         run: devcontainer features test --global-scenarios-only .
 
   release:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs:
       - test
