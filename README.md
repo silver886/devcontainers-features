@@ -6,7 +6,7 @@ Features for Development Containers.
 
 Installs make, a build automation tool.
 
-### Support Images
+### Supported Images
 
 - docker.io/library/alpine:latest
 - docker.io/library/archlinux:latest
