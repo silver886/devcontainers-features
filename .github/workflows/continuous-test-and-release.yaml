@@ -6,6 +6,7 @@ on:
 
 jobs:
   test:
+    name: Test features
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,6 +31,7 @@ jobs:
         run: devcontainer features test -f ${{ matrix.features }} -i ${{ matrix.baseImage }} .
 
   test-global:
+    name: Test global
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,16 +42,23 @@ jobs:
         run: devcontainer features test --global-scenarios-only .
 
   release:
+    name: Release
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs:
       - test
       - test-global
+    permissions:
+      packages: write
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: silver886/github-actions/checkout@master
       - name: Publish
         uses: devcontainers/action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           publish-features: true
           base-path-to-features: ./src
