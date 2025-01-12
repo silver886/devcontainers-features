@@ -1,0 +1,7 @@
+{
+    "name": "make",
+    "id": "make",
+    "version": "0.0.1",
+    "description": "Installs make, a build automation tool.",
+    "options": {}
+}
